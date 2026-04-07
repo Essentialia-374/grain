@@ -3,21 +3,21 @@ package(default_visibility = ["//grain:__subpackages__"])
 licenses(["notice"])
 
 py_library(
-    name = "queue",
+    name = "ipc_queue",
     srcs = [
-        "queue.py",
+        "ipc_queue.py",
     ],
     srcs_version = "PY3",
 )
 
 py_test(
-    name = "queue_test",
+    name = "ipc_queue_test",
     srcs = [
-        "queue_test.py",
+        "ipc_queue_test.py",
     ],
     srcs_version = "PY3",
     deps = [
-        ":queue",
+        ":ipc_queue",
         "@abseil-py//absl/testing:absltest",
     ],
 )

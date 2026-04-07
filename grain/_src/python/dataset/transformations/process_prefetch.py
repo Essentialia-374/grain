@@ -37,7 +37,7 @@ from grain._src.python.dataset import dataset
 from grain._src.python.dataset import stats as dataset_stats
 from grain._src.python.dataset.transformations import interleave
 from grain._src.python.dataset.transformations import prefetch
-from grain._src.python.ipc import queue as grain_queue
+from grain._src.python.ipc import ipc_queue as grain_queue
 from grain._src.python.ipc import shared_memory_array
 
 
