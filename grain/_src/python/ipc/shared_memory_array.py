@@ -37,15 +37,28 @@ class SharedMemoryArrayMetadata:
 
   def close_and_unlink_shm(self) -> None:
     """Closes and unlinks the shared memory referred to by this instance."""
-    shm = shared_memory.SharedMemory(self.name)
+    try:
+      shm = shared_memory.SharedMemory(self.name)
+    except FileNotFoundError:
+      # The shared memory may already have been unlinked by another process.
+      # This can happen in teardown races and should be treated as success.
+      return
     shm.close()
-    shm.unlink()
+    try:
+      shm.unlink()
+    except FileNotFoundError:
+      # Another process won the unlink race between open() and unlink().
+      pass
 
 
 def _del_shm(shm: shared_memory.SharedMemory, unlink: bool) -> None:
   shm.close()
   if unlink:
-    shm.unlink()
+    try:
+      shm.unlink()
+    except FileNotFoundError:
+      # Best-effort cleanup in case another process already unlinked.
+      pass
 
 
 class SharedMemoryArray(np.ndarray):

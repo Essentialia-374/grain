@@ -22,7 +22,6 @@
 # We import all public modules here to enable the use of `grain.foo.Bar`
 # instead of forcing users to write `from grain import foo as grain_foo`.
 from grain import (
-    experimental,
     checkpoint,
     constants,
     multiprocessing,

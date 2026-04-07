@@ -248,6 +248,23 @@ class SharedMemoryArrayTest(parameterized.TestCase):
       with self.assertRaises(FileNotFoundError):
         shared_memory.SharedMemory(name=name, create=False)
 
+  def test_close_and_unlink_shm_when_already_unlinked(self):
+    arr = SharedMemoryArray((2, 2), np.int32)
+    metadata = arr.metadata
+    arr.unlink_on_del()
+    del arr
+
+    # Simulate teardown race: metadata cleanup runs after __del__ cleanup.
+    metadata.close_and_unlink_shm()
+
+  def test_unlink_shm_idempotent(self):
+    arr = np.arange(10).astype(np.int32)
+    shm_struct = copy_to_shm(arr)
+    self.assertIsInstance(shm_struct, SharedMemoryArrayMetadata)
+    unlink_shm(shm_struct)
+    # Calling unlink twice should not fail due to races.
+    unlink_shm(shm_struct)
+
 
 if __name__ == "__main__":
   absltest.main()
