@@ -243,8 +243,8 @@ def _unlink_shm_if_metadata(obj: Any) -> None:
     try:
       obj.close_and_unlink_shm()
     except FileNotFoundError:
-      # Some callers may pass metadata implementations that do not swallow
-      # teardown races internally. Treat "already unlinked" as success.
+      pass
+    except OSError:
       pass
 
 
