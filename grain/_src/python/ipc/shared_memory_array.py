@@ -240,7 +240,12 @@ def open_from_shm(struct: Any) -> Any:
 
 def _unlink_shm_if_metadata(obj: Any) -> None:
   if isinstance(obj, SharedMemoryArrayMetadata):
-    obj.close_and_unlink_shm()
+    try:
+      obj.close_and_unlink_shm()
+    except FileNotFoundError:
+      # Some callers may pass metadata implementations that do not swallow
+      # teardown races internally. Treat "already unlinked" as success.
+      pass
 
 
 def unlink_shm(struct: Any) -> None:

@@ -265,6 +265,17 @@ class SharedMemoryArrayTest(parameterized.TestCase):
     # Calling unlink twice should not fail due to races.
     unlink_shm(shm_struct)
 
+  def test_unlink_shm_ignores_not_found_from_metadata_cleanup(self):
+    arr = np.arange(10).astype(np.int32)
+    shm_struct = copy_to_shm(arr)
+    self.assertIsInstance(shm_struct, SharedMemoryArrayMetadata)
+    with mock.patch.object(
+        SharedMemoryArrayMetadata,
+        "close_and_unlink_shm",
+        side_effect=FileNotFoundError,
+    ):
+      unlink_shm(shm_struct)
+
 
 if __name__ == "__main__":
   absltest.main()
